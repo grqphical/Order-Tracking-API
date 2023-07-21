@@ -4,7 +4,6 @@ from order_api.database import engine, Base
 
 import pytest
 import json
-import os
 
 
 class TestAPI:
@@ -56,7 +55,7 @@ class TestAPI:
         response = self.client.get("/orders/active")
 
         assert response.status_code == 200
-        assert response.json()[0]["active"] == True
+        assert response.json()[0]["active"] is True
 
     def test_orders_status(self):
         response = self.client.get("/orders/status/ORDER_SHIPPED")
@@ -78,7 +77,7 @@ class TestAPI:
 
         response = self.client.get("/orders/1")
 
-        assert response.json()["active"] == False
+        assert response.json()["active"] is False
     
     def test_orders_modify(self):
         response = self.client.patch("/orders/1", data=json.dumps({
