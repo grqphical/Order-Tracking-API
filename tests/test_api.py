@@ -113,7 +113,8 @@ class TestAPI:
         result = graphql_schema.execute_sync(query)
 
         assert result.errors is None
-        assert result.data["orders"] == [{"address" : "125 Example Street"}, {"address" : "124 Example Street"}]
+        assert result.data["orders"] == [{"address" : "125 Example Street"}, 
+                                         {"address" : "124 Example Street"}]
     
     def test_graphql_get_one(self):
         query = """
@@ -129,7 +130,9 @@ class TestAPI:
         result = graphql_schema.execute_sync(query, variable_values={"id" : 1})
 
         assert result.errors is None
-        assert result.data["order"] == {"address" : "125 Example Street", "recipientName" : "Timmy Doe", "active" : True}
+        assert result.data["order"] == {"address" : "125 Example Street", 
+                                        "recipientName" : "Timmy Doe", 
+                                        "active" : True}
     
     def test_graphql_create(self):
         query = """mutation {
@@ -144,7 +147,8 @@ class TestAPI:
         result = graphql_schema.execute_sync(query)
 
         assert result.errors is None
-        assert result.data["addOrder"] == {"address" : "127 Main Street", "recipientName" : "Mark Twain"}
+        assert result.data["addOrder"] == {"address" : "127 Main Street", 
+                                           "recipientName" : "Mark Twain"}
     
     def test_graphql_delete(self):
         query = """mutation {

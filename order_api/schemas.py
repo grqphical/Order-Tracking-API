@@ -5,7 +5,6 @@ import strawberry
 
 from .types import OrderStatus
 from strawberry.scalars import JSON
-from strawberry.field_extensions import InputMutationExtension
 from .database import db
 from . import models
 
@@ -65,7 +64,11 @@ class Query:
 @strawberry.type
 class Mutation:
     @strawberry.mutation
-    def add_order(self, address:str, recipient_name: str, items:List[JSON], active: bool=True, status: OrderStatus = OrderStatus.ORDER_PROCESSING) -> OrderSchema:
+    def add_order(self, address:str, 
+                  recipient_name: str, 
+                  items:List[JSON], 
+                  active: bool=True, 
+                  status: OrderStatus = OrderStatus.ORDER_PROCESSING) -> OrderSchema:
         """Adds an order to the database via GraphQL"""
         order = models.Order(
             address=address,
@@ -82,7 +85,14 @@ class Mutation:
         return order
     
     @strawberry.mutation
-    def update_order(self, info, id:int, address:str=None, recipient_name: str=None, items:List[JSON]=None, active: bool=None, status: OrderStatus=None) -> OrderSchema:
+    def update_order(self, 
+                     info, 
+                     id:int, 
+                     address:str=None, 
+                     recipient_name: str=None, 
+                     items:List[JSON]=None, 
+                     active: bool=None, 
+                     status: OrderStatus=None) -> OrderSchema:
         """Updates an order in the database via GraphQL"""
         order = models.Order(
             id=id,
