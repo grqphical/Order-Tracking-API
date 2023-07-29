@@ -1,6 +1,7 @@
 import enum
+import strawberry
 
-
+@strawberry.enum
 class OrderStatus(str, enum.Enum):
     """Used to track an order's status"""
 

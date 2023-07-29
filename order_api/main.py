@@ -8,10 +8,18 @@ from .types import OrderStatus
 from sqlalchemy.orm import Session
 from typing import List
 from fastapi.encoders import jsonable_encoder
+from strawberry.fastapi import GraphQLRouter
 
 import http
+import strawberry
 
 app = FastAPI(title="Order Tracking API", version="1.0.0")
+
+# Load our GraphQL schemas and create the router
+graphql_schema = strawberry.Schema(query=schemas.Query, mutation=schemas.Mutation)
+graphql_app = GraphQLRouter(graphql_schema)
+
+app.include_router(graphql_app, prefix="/graphql", tags=["GraphQL"])
 
 models.Base.metadata.create_all(bind=engine)
 

@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from order_api.main import app
+from order_api.main import app, graphql_schema
 from order_api.database import engine, Base
 
 import pytest
@@ -100,3 +100,60 @@ class TestAPI:
         assert response.status_code == 200
         assert response.json()["address"] == "125 Example Street"
         assert response.json()["recipient_name"] == "Timmy Doe"
+    
+    def test_graphql_get_all(self):
+        query = """
+        query TestQuery {
+                orders {
+                    address
+                }
+            }
+                """
+        
+        result = graphql_schema.execute_sync(query)
+
+        assert result.errors is None
+        assert result.data["orders"] == [{"address" : "125 Example Street"}, {"address" : "124 Example Street"}]
+    
+    def test_graphql_get_one(self):
+        query = """
+        query TestQuery($id: Int!) {
+                order(id: $id) {
+                    address,
+                    recipientName,
+                    active
+                }
+            }
+                """
+        
+        result = graphql_schema.execute_sync(query, variable_values={"id" : 1})
+
+        assert result.errors is None
+        assert result.data["order"] == {"address" : "125 Example Street", "recipientName" : "Timmy Doe", "active" : True}
+    
+    def test_graphql_create(self):
+        query = """mutation {
+    addOrder(address: "127 Main Street", 
+      recipientName: "Mark Twain",
+    	items: "[{'item' : 'pen', 'quantity' : 5}]"){
+      address,
+      recipientName
+    }
+  }"""
+        
+        result = graphql_schema.execute_sync(query)
+
+        assert result.errors is None
+        assert result.data["addOrder"] == {"address" : "127 Main Street", "recipientName" : "Mark Twain"}
+    
+    def test_graphql_delete(self):
+        query = """mutation {
+    deleteOrder(id: 1){
+      address,
+      recipientName
+    }
+  }"""
+        
+        result = graphql_schema.execute_sync(query)
+
+        assert result.errors is None
